@@ -1,6 +1,6 @@
 {
     "name": "@jx3box/jx3box-emotion",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "骚话渲染",
     "main": "index.js",
     "repository": {
