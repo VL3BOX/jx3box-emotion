@@ -74,10 +74,10 @@ class JX3_EMOTION {
         emotion_3.forEach((emotion) => (str = str.replace(emotion, replacer)));
 
         return `
-      <div>
-        ${str}
-      </div>
-    `;
+        <div style="vertical-align: -4px;">
+            ${str}
+        </div>
+        `;
     }
 }
 
