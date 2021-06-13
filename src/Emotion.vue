@@ -59,7 +59,7 @@ export default {
         padding: 4px;
         margin: 2px;
         border: 1px solid #fff;
-        .pointer;
+        cursor: pointer;
 
         &:hover {
             border-color: #ccc;
