@@ -1,7 +1,7 @@
 {
     "name": "@jx3box/jx3box-emotion",
-    "version": "1.0.4",
-    "description": "骚话渲染",
+    "version": "1.0.5",
+    "description": "通用表情插入与渲染模块",
     "main": "index.js",
     "repository": {
         "type": "git",

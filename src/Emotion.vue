@@ -1,7 +1,7 @@
 <template>
-    <div class="m-jx3box-emotion">
+    <div class="c-jx3box-emotion">
         <template v-for="emotion in sortedEmotions">
-            <span :key="emotion.key" class="emotion-item" @click="handleEmotionClick(emotion.key)">
+            <span :key="emotion.key" class="c-jx3box-emotion-item" @click="handleEmotionClick(emotion.key)">
                 <img :src="emotion.path" :alt="emotion.key" :title="emotion.key" />
             </span>
         </template>
@@ -51,10 +51,10 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.m-jx3box-emotion {
+.c-jx3box-emotion {
     margin: 16px 0;
 
-    .emotion-item {
+    .c-jx3box-emotion-item {
         display: inline-flex;
         padding: 4px;
         margin: 2px;
