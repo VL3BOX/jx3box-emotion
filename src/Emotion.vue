@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import emotion from "@jx3box/jx3box-data/data/jokes/default.json";
+import emotion from "../data/default.json";
 import { __imgPath } from "@jx3box/jx3box-common/data/jx3box.json";
 export default {
   name: 'Emotion',
