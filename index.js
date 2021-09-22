@@ -5,7 +5,7 @@
  */
 
 import $ from "jquery";
-import emotions from "@jx3box/jx3box-data/data/jokes/default.json";
+import emotions from "./data/default.json";
 import { __imgPath } from "@jx3box/jx3box-common/data/jx3box.json";
 
 class JX3_EMOTION {
