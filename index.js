@@ -30,10 +30,6 @@ class JX3_EMOTION {
 
         const emotionKeys = Object.keys(emotions);
 
-        const regex_1 = /(#[\u4e00-\u9fa5]{1})/g;
-        const regex_2 = /(#[\u4e00-\u9fa5]{2})/g;
-        const regex_3 = /(#[\u4e00-\u9fa5]{3})/g;
-
         const _initEmotions = (data) => {
             const keys = Object.keys(data);
 
@@ -51,27 +47,21 @@ class JX3_EMOTION {
 
         const replacer = (str) => {
             let _emotions = _initEmotions(emotions);
-            return `<img src="${_emotions[str]}" />`;
+            return `<img src="${_emotions[str]}" alt="${str}" title="${str}" />`;
         };
 
-        const emotion_1 = str.match(regex_1)
-            ? str
-                  .match(regex_1)
-                  .filter((emotion) => emotionKeys.includes(emotion))
-            : [];
-        emotion_1.forEach((emotion) => (str = str.replace(emotion, replacer)));
-        const emotion_2 = str.match(regex_2)
-            ? str
-                  .match(regex_2)
-                  .filter((emotion) => emotionKeys.includes(emotion))
-            : [];
-        emotion_2.forEach((emotion) => (str = str.replace(emotion, replacer)));
-        const emotion_3 = str.match(regex_3)
-            ? str
-                  .match(regex_3)
-                  .filter((emotion) => emotionKeys.includes(emotion))
-            : [];
-        emotion_3.forEach((emotion) => (str = str.replace(emotion, replacer)));
+        const replaceAll = (str, mapper) => {
+            const pattern = new RegExp(Object.keys(mapper).join("|"), "gi");
+            return str.replace(pattern, (match) => mapper[match]);
+        }
+
+        const pattern = /(#[\u4e00-\u9fa5]{1,3})/g;
+        if(pattern.test(str)) {
+            let keys = str.match(pattern)
+                            .filter((emotion) => emotionKeys.includes(emotion))                         // Only valid
+                            .reduce((before, value) => ({ ...before, [value]: replacer(value)}), {});   // Convert to dict
+            str = replaceAll(str, keys);
+        }
 
         return str;
     }
