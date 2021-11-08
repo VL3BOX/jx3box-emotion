@@ -55,13 +55,20 @@ class JX3_EMOTION {
             return str.replace(pattern, (match) => mapper[match]);
         }
 
-        const pattern = /(#[\u4e00-\u9fa5]{1,3})/g;
-        if(pattern.test(str)) {
-            let keys = str.match(pattern)
-                            .filter((emotion) => emotionKeys.includes(emotion))                         // Only valid
-                            .reduce((before, value) => ({ ...before, [value]: replacer(value)}), {});   // Convert to dict
-            str = replaceAll(str, keys);
-        }
+        const patterns = [ /(#[\u4e00-\u9fa5]{1})/g, /(#[\u4e00-\u9fa5]{2})/g, /(#[\u4e00-\u9fa5]{3})/g ];  // Emotion keys has maximum of 3 chars
+        let allKeys = {};
+
+        patterns.forEach((pattern) => {
+            if (pattern.test(str)) {
+                let keys = str.match(pattern)
+                    .filter((emotion) => emotionKeys.includes(emotion))                         // Only valid
+                    .reduce((before, value) => ({ ...before, [value]: replacer(value) }), {});  // Get HTML element and deduplicate to dict
+                allKeys = Object.assign({}, allKeys, keys);                                     // Append to main dict for rendering
+            }
+        });
+
+        if (Object.keys(allKeys).length > 0)
+            str = replaceAll(str, allKeys);
 
         return str;
     }
