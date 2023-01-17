@@ -72,7 +72,8 @@ export default {
         loadDecoration() {
             $cms().get(`/api/cms/user/decoration`, {
                 params: {
-                    type: 'emoji'
+                    type: 'emotion',
+                    using: 1
                 }
             }).then((res) => {
                 this.decoration = res.data.data
