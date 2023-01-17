@@ -1,53 +1,85 @@
 <template>
     <div class="c-jx3box-emotion">
-        <template v-for="emotion in sortedEmotions">
-            <span :key="emotion.key" class="c-jx3box-emotion-item" @click="handleEmotionClick(emotion.key)">
-                <img :src="emotion.path" :alt="emotion.key" :title="emotion.key" />
-            </span>
-        </template>
+        <el-tabs type="card">
+            <el-tab-pane
+                v-for="item in decorationEmotion"
+                :key="item.group_id"
+                :label="item.group_name"
+            >
+                <template v-for="emotion in item.items">
+                    <span
+                        :key="emotion.emotion_id"
+                        class="c-jx3box-emotion-item"
+                        @click="handleEmotionClick(emotion)"
+                    >
+                        <img
+                            :src="`${EmojiPath}${emotion.filename}`"
+                            :alt="emotion.key"
+                            :title="emotion.key"
+                        />
+                    </span>
+                </template>
+            </el-tab-pane>
+        </el-tabs>
     </div>
 </template>
 
 <script>
-import emotion from "../data/default.json";
-import { __imgPath } from "@jx3box/jx3box-common/data/jx3box.json";
+import { __imgPath, __dataPath } from "@jx3box/jx3box-common/data/jx3box.json";
+import { $cms } from "@jx3box/jx3box-common/js/https";
+import User from "@jx3box/jx3box-common/js/user";
 export default {
-  name: 'Emotion',
-  data () {
-    return  {
-      sortedEmotions: [],
-    }
-  },
-  created() {
-      this.emotionSort()
-  },
-  methods: {
-    // 表情排序
-    emotionSort() {
-        const keys = Object.keys(emotion);
-        keys.sort((item1, item2) => {
-            return item1.localeCompare(item2);
-        });
-        keys.forEach((key) => {
-            const pathKey = key.slice(1);
-            const obj = {
-                key,
-                value: emotion[key],
-                path: __imgPath + `image/emotion/${pathKey}.gif`,
-            };
-            // console.log(key)
-            this.sortedEmotions.push(obj);
-        });
+    name: "Emotion",
+    data() {
+        return {
+            emotionList: [],
+            EmojiPath: __imgPath + "emotion/output/",
+            
+            decoration: []
+        };
     },
-    /**
-     * 点击表情触发事件
-     * @param {string} key 表情key
-     */
-    handleEmotionClick(key) {
-        this.$emit('selected', key)
-    }
-  }
-}
+    created() {
+        this.loadEmotionList();
+        this.loadDecoration();
+    },
+    computed: {
+        decorationEmotion({ emotionList, decoration }) {
+            const defaultEmo = emotionList.filter(item => item.group_id === 0);
+            if (decoration.length === 0) {
+                return defaultEmo;
+            } else {
+                const arr = emotionList.filter(item => decoration.includes(item.group_id));
+                return [...defaultEmo, ...arr];
+            }
+        }
+    },
+    methods: {
+        /**
+         * 点击表情触发事件
+         * @param {Object} emotion 表情对象
+         */
+        handleEmotionClick(emotion) {
+            const src = `${this.EmojiPath}${emotion.filename}`;
+            this.$emit("selected", src);
+        },
+        loadEmotionList() {
+            fetch(`${__dataPath}emotion/output/catalog.json`)
+                .then((response) => response.json())
+                .then((data) => {
+                    this.emotionList = data;
+                });
+        },
+        loadDecoration() {
+            $cms().get(`/api/cms/user/decoration`, {
+                params: {
+                    type: 'emoji'
+                }
+            }).then((res) => {
+                this.decoration = res.data.data
+            });
+        }
+    },
+};
 </script>
 
 <style lang="less" scoped>
