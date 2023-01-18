@@ -27,7 +27,6 @@
 <script>
 import { __imgPath, __dataPath } from "@jx3box/jx3box-common/data/jx3box.json";
 import { $cms } from "@jx3box/jx3box-common/js/https";
-import User from "@jx3box/jx3box-common/js/user";
 export default {
     name: "Emotion",
     data() {
@@ -44,12 +43,15 @@ export default {
     },
     computed: {
         decorationEmotion({ emotionList, decoration }) {
+            // 默认表情
             const defaultEmo = emotionList.filter(item => item.group_id === 0);
             if (decoration.length === 0) {
                 return defaultEmo;
             } else {
-                const arr = emotionList.filter(item => decoration.includes(item.group_id));
-                return [...defaultEmo, ...arr];
+                // 购买的表情
+                const arr = emotionList.filter(item => decoration.includes(item.group_name));
+                // 截取4个
+                return [...defaultEmo, ...arr].slice(0, 4);
             }
         }
     },
@@ -62,6 +64,7 @@ export default {
             const src = `${this.EmojiPath}${emotion.filename}`;
             this.$emit("selected", src);
         },
+        // 获取全部表情
         loadEmotionList() {
             fetch(`${__dataPath}emotion/output/catalog.json`)
                 .then((response) => response.json())
@@ -69,14 +72,16 @@ export default {
                     this.emotionList = data;
                 });
         },
+        // 获取虚拟资产
         loadDecoration() {
             $cms().get(`/api/cms/user/decoration`, {
                 params: {
                     type: 'emotion',
-                    using: 1
+                    // using: 1,
+                    uid: 8719
                 }
             }).then((res) => {
-                this.decoration = res.data.data
+                this.decoration = res.data.data.map(item => item.val)
             });
         }
     },
