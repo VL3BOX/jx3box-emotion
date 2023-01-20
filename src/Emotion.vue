@@ -61,8 +61,7 @@ export default {
          * @param {Object} emotion 表情对象
          */
         handleEmotionClick(emotion) {
-            const src = `${this.EmojiPath}${emotion.filename}`;
-            this.$emit("selected", src);
+            this.$emit("selected", emotion);
         },
         // 获取全部表情
         loadEmotionList() {
