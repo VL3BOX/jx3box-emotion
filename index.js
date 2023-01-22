@@ -5,8 +5,8 @@
  */
 
 import $ from "jquery";
-import emotions from "./data/default.json";
-import { __imgPath } from "@jx3box/jx3box-common/data/jx3box.json";
+import { __imgPath, __dataPath } from "@jx3box/jx3box-common/data/jx3box.json";
+import { flatMapDeep } from "lodash"
 
 class JX3_EMOTION {
     /**
@@ -14,6 +14,9 @@ class JX3_EMOTION {
      */
     constructor(joke) {
         this._joke = $.trim(joke);
+        this.emotionList = [];
+
+        this.loadEmotionList();
 
         this.init();
     }
@@ -25,28 +28,43 @@ class JX3_EMOTION {
         return;
     }
 
+    // 获取全部表情
+    loadEmotionList() {
+        try {
+            const emotion = sessionStorage.getItem("jx3_emotion");
+            if (emotion) {
+                this.emotionList = JSON.parse(emotion);
+                return;
+            } else {
+                this.emotionList = [];
+            }
+        } catch (e) {
+            this.emotionList = [];
+        }
+    }
+
     _renderHTML() {
         let str = this._joke;
 
-        const emotionKeys = Object.keys(emotions);
+        const emotions = flatMapDeep(this.emotionList.map(item => item.items));
+        const emotionKeys = emotions.map(item => item.key);
 
         const _initEmotions = (data) => {
-            const keys = Object.keys(data);
 
             const obj = {};
 
-            keys.forEach((key) => {
-                const pathKey = key.slice(1);
-                const imgPath = __imgPath + `image/emotion/${pathKey}.gif`;
+            emotionKeys.forEach((key) => {
+                const _emotion = emotions.find((item) => item.key === key);
+                const src = `${__imgPath}emotion/output/${_emotion.filename}`
 
-                obj[key] = imgPath;
+                obj[key] = src;
             });
 
             return obj;
         };
 
         const replacer = (str) => {
-            let _emotions = _initEmotions(emotions);
+            let _emotions = _initEmotions();
             return `<img src="${_emotions[str]}" alt="${str}" title="${str}" />`;
         };
 
@@ -55,7 +73,7 @@ class JX3_EMOTION {
             return str.replace(pattern, (match) => mapper[match]);
         }
 
-        const patterns = [ /(#[\u4e00-\u9fa5]{1})/g, /(#[\u4e00-\u9fa5]{2})/g, /(#[\u4e00-\u9fa5]{3})/g ];  // Emotion keys has maximum of 3 chars
+        const patterns = [/(#[\u4e00-\u9fa5]{1})/g, /(#[\u4e00-\u9fa5]{2})/g, /(#[\u4e00-\u9fa5]{3})/g];  // Emotion keys has maximum of 3 chars
         let allKeys = {};
 
         patterns.forEach((pattern) => {

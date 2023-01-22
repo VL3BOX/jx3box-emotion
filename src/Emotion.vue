@@ -65,11 +65,27 @@ export default {
         },
         // 获取全部表情
         loadEmotionList() {
-            fetch(`${__dataPath}emotion/output/catalog.json`)
-                .then((response) => response.json())
-                .then((data) => {
-                    this.emotionList = data;
-                });
+            try {
+                const emotion = sessionStorage.getItem("jx3_emotion");
+                if (emotion) {
+                    this.emotionList = JSON.parse(emotion);
+                    return;
+                } else {
+                    fetch(`${__dataPath}emotion/output/catalog.json`)
+                        .then((response) => response.json())
+                        .then((data) => {
+                            this.emotionList = data;
+                            sessionStorage.setItem("jx3_emotion", JSON.stringify(data));
+                        });
+                }
+            } catch(e) {
+                fetch(`${__dataPath}emotion/output/catalog.json`)
+                    .then((response) => response.json())
+                    .then((data) => {
+                        this.emotionList = data;
+                        sessionStorage.setItem("jx3_emotion", JSON.stringify(data));
+                    });
+            }
         },
         // 获取虚拟资产
         loadDecoration() {
