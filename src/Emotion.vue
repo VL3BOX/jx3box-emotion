@@ -27,6 +27,7 @@
 <script>
 import { __imgPath, __dataPath } from "@jx3box/jx3box-common/data/jx3box.json";
 import { $cms } from "@jx3box/jx3box-common/js/https";
+import User from "@jx3box/jx3box-common/js/user.js";
 export default {
     name: "Emotion",
     data() {
@@ -89,11 +90,12 @@ export default {
         },
         // 获取虚拟资产
         loadDecoration() {
+            if (!User.isLogin()) return;
             $cms().get(`/api/cms/user/decoration`, {
                 params: {
                     type: 'emotion',
                     // using: 1,
-                    uid: 8719
+                    // uid: 8719
                 }
             }).then((res) => {
                 this.decoration = res.data.data.map(item => item.val)
