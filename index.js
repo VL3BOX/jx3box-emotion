@@ -15,8 +15,7 @@ class JX3_EMOTION {
     constructor(joke) {
         this._joke = $.trim(joke);
         this.emotionList = [];
-
-        this.loadEmotionList();
+        this.max = 0;
 
         this.init();
     }
@@ -28,65 +27,52 @@ class JX3_EMOTION {
         return;
     }
 
-    // 获取全部表情
+    // 获取表情
     loadEmotionList() {
-        try {
-            const emotion = sessionStorage.getItem("jx3_emotion");
-            if (emotion) {
-                this.emotionList = JSON.parse(emotion);
-                return;
-            } else {
-                this.emotionList = [];
-            }
-        } catch (e) {
-            this.emotionList = [];
+        const emotions = sessionStorage.getItem("jx3_emotion");
+        if (emotions) {
+            return JSON.parse(emotions);
         }
+        return [];
     }
 
     _renderHTML() {
+        this.emotionList = this.loadEmotionList();
         let str = this._joke;
+
+        // 1. 没有表情符号，直接返回
+        if (!str.includes("#")) return str;
 
         const emotions = flatMapDeep(this.emotionList.map(item => item.items));
         const emotionKeys = emotions.map(item => item.key);
 
-        const _initEmotions = (data) => {
+        // 2. 获取表情符号的位置并且替换为img标签
+        while (emotionKeys.some(key => str.includes(key))) {
 
-            const obj = {};
+            const _index = emotionKeys.findIndex(key => str.includes(key));
 
-            emotionKeys.forEach((key) => {
-                const _emotion = emotions.find((item) => item.key === key);
-                const src = `${__imgPath}emotion/output/${_emotion.filename}`
+            const key = emotionKeys[_index].replace('#', '$');
 
-                obj[key] = src;
-            });
-
-            return obj;
-        };
-
-        const replacer = (str) => {
-            let _emotions = _initEmotions();
-            return `<img src="${_emotions[str]}" alt="${str}" title="${str}" />`;
-        };
-
-        const replaceAll = (str, mapper) => {
-            const pattern = new RegExp(Object.keys(mapper).join("|"), "gi");
-            return str.replace(pattern, (match) => mapper[match]);
+            str = _index > -1 ? str.replace(emotionKeys[_index], key) : str;
         }
+        // 3. 替换表情符号为img标签
+        while (emotionKeys.some(key => str.includes(`${key.replace('#', '$')}`))) {
 
-        const patterns = [/(#[\u4e00-\u9fa5]{1})/g, /(#[\u4e00-\u9fa5]{2})/g, /(#[\u4e00-\u9fa5]{3})/g];  // Emotion keys has maximum of 3 chars
-        let allKeys = {};
+            const _index = emotionKeys.findIndex(key => str.includes(key.replace('#', '$')));
 
-        patterns.forEach((pattern) => {
-            if (pattern.test(str)) {
-                let keys = str.match(pattern)
-                    .filter((emotion) => emotionKeys.includes(emotion))                         // Only valid
-                    .reduce((before, value) => ({ ...before, [value]: replacer(value) }), {});  // Get HTML element and deduplicate to dict
-                allKeys = Object.assign({}, allKeys, keys);                                     // Append to main dict for rendering
-            }
-        });
+            const _emotion = emotions.find(item => item.key === emotionKeys[_index]);
 
-        if (Object.keys(allKeys).length > 0)
-            str = replaceAll(str, allKeys);
+            const src = _emotion ? `${__imgPath}emotion/output/${_emotion.filename}` : '';
+
+            const key = emotionKeys[_index].replace('#', '$');
+
+            str = src ? str.replace(key, `<img src="${src}" alt="${emotionKeys[_index]}" title="${emotionKeys[_index]}" />`) : str;
+        }
+        // 4. 递归 3 次，防止没获取到表情
+        if (!this.emotionList.length && this.max < 3) {
+            this._renderHTML();
+            this.max++;
+        }
 
         return str;
     }
