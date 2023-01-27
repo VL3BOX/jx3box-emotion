@@ -1,24 +1,10 @@
 <template>
     <div class="c-jx3box-emotion">
         <el-tabs type="card">
-            <el-tab-pane
-                v-for="item in decorationEmotion"
-                :key="item.group_id"
-                :label="item.group_name"
-            >
-                <template v-for="emotion in item.items">
-                    <span
-                        :key="emotion.emotion_id"
-                        class="c-jx3box-emotion-item"
-                        @click="handleEmotionClick(emotion)"
-                    >
-                        <img
-                            :src="`${EmojiPath}${emotion.filename}`"
-                            :alt="emotion.key"
-                            :title="emotion.key"
-                        />
-                    </span>
-                </template>
+            <el-tab-pane v-for="item in decorationEmotion" :key="item.group_id" :label="item.group_name">
+                <span v-for="emotion in item.items" :key="emotion.emotion_id" class="c-jx3box-emotion-item" @click="handleEmotionClick(emotion)">
+                    <img :src="`${EmojiPath}${emotion.filename}`" :alt="emotion.key" :title="emotion.key" />
+                </span>
             </el-tab-pane>
         </el-tabs>
     </div>
@@ -34,8 +20,8 @@ export default {
         return {
             emotionList: [],
             EmojiPath: __imgPath + "emotion/output/",
-            
-            decoration: []
+
+            decoration: [],
         };
     },
     created() {
@@ -45,16 +31,16 @@ export default {
     computed: {
         decorationEmotion({ emotionList, decoration }) {
             // 默认表情
-            const defaultEmo = emotionList.filter(item => item.group_id === 0);
+            const defaultEmo = emotionList.filter((item) => item.group_id === 0);
             if (decoration.length === 0) {
                 return defaultEmo;
             } else {
                 // 购买的表情
-                const arr = emotionList.filter(item => decoration.includes(item.group_name));
+                const arr = emotionList.filter((item) => decoration.includes(item.group_name));
                 // 截取4个
                 return [...defaultEmo, ...arr].slice(0, 4);
             }
-        }
+        },
     },
     methods: {
         /**
@@ -79,7 +65,7 @@ export default {
                             sessionStorage.setItem("jx3_emotion", JSON.stringify(data));
                         });
                 }
-            } catch(e) {
+            } catch (e) {
                 fetch(`${__dataPath}emotion/output/catalog.json`)
                     .then((response) => response.json())
                     .then((data) => {
@@ -91,16 +77,18 @@ export default {
         // 获取虚拟资产
         loadDecoration() {
             if (!User.isLogin()) return;
-            $cms().get(`/api/cms/user/decoration`, {
-                params: {
-                    type: 'emotion',
-                    // using: 1,
-                    // uid: 8719
-                }
-            }).then((res) => {
-                this.decoration = res.data.data.map(item => item.val)
-            });
-        }
+            $cms()
+                .get(`/api/cms/user/decoration`, {
+                    params: {
+                        type: "emotion",
+                        using: 1,
+                        // uid: 8719
+                    },
+                })
+                .then((res) => {
+                    this.decoration = res.data.data.map((item) => item.val);
+                });
+        },
     },
 };
 </script>
