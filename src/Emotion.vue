@@ -1,12 +1,69 @@
 <template>
     <div class="c-jx3box-emotion">
-        <el-tabs type="card">
-            <el-tab-pane v-for="item in decorationEmotion" :key="item.group_id" :label="item.group_name">
-                <span v-for="emotion in item.items" :key="emotion.emotion_id" class="c-jx3box-emotion-item" @click="handleEmotionClick(emotion)">
-                    <img :src="`${EmojiPath}${emotion.filename}`" :alt="emotion.key" :title="emotion.key" />
+        <el-tabs type="card" v-if="type === 'default'">
+            <el-tab-pane
+                v-for="item in decorationEmotion"
+                :key="item.group_id"
+                :label="item.group_name"
+            >
+                <span
+                    v-for="emotion in item.items"
+                    :key="emotion.emotion_id"
+                    class="c-jx3box-emotion-item"
+                    @click="handleEmotionClick(emotion)"
+                >
+                    <img
+                        :src="`${EmojiPath}${emotion.filename}`"
+                        :alt="emotion.key"
+                        :title="emotion.key"
+                    />
                 </span>
             </el-tab-pane>
         </el-tabs>
+        <el-popover
+            v-else
+            placement="top"
+            trigger="click"
+            :visible-arrow="false"
+            popper-class="c-jx3box-emotion-pop"
+            ref="emotion"
+        >
+            <div class="c-jx3box-emotion-pop__content">
+                <i class="el-icon-close u-close" @click="closePop"></i>
+                <div class="u-title">表情</div>
+
+                <el-tabs type="card" tab-position="bottom">
+                    <el-tab-pane
+                        v-for="item in decorationEmotion"
+                        :key="item.group_id"
+                        :label="item.group_name"
+                    >
+                        <div class="c-jx3box-emotion-list">
+                            <span
+                                v-for="emotion in item.items"
+                                :key="emotion.emotion_id"
+                                class="c-jx3box-emotion-item"
+                                @click="handleEmotionClick(emotion)"
+                            >
+                                <img
+                                    :src="`${EmojiPath}${emotion.filename}`"
+                                    :alt="emotion.key"
+                                    :title="emotion.key"
+                                />
+                            </span>
+                        </div>
+                    </el-tab-pane>
+                </el-tabs>
+            </div>
+            <img
+                slot="reference"
+                class="u-reference"
+                width="24"
+                height="24"
+                src="../data/img/emotion.svg"
+                alt=""
+            />
+        </el-popover>
     </div>
 </template>
 
@@ -16,6 +73,13 @@ import { $cms } from "@jx3box/jx3box-common/js/https";
 import User from "@jx3box/jx3box-common/js/user.js";
 export default {
     name: "Emotion",
+    props: {
+        type: {
+            type: String,
+            default: "default",
+        },
+    },
+    emits: ["selected"],
     data() {
         return {
             emotionList: [],
@@ -31,12 +95,16 @@ export default {
     computed: {
         decorationEmotion({ emotionList, decoration }) {
             // 默认表情
-            const defaultEmo = emotionList.filter((item) => item.group_id === 0);
+            const defaultEmo = emotionList.filter(
+                (item) => item.group_id === 0
+            );
             if (decoration.length === 0) {
                 return defaultEmo;
             } else {
                 // 购买的表情
-                const arr = emotionList.filter((item) => decoration.includes(item.group_name));
+                const arr = emotionList.filter((item) =>
+                    decoration.includes(item.group_name)
+                );
                 // 截取4个
                 return [...defaultEmo, ...arr].slice(0, 4);
             }
@@ -49,6 +117,7 @@ export default {
          */
         handleEmotionClick(emotion) {
             this.$emit("selected", emotion);
+            this.closePop();
         },
         // 获取全部表情
         loadEmotionList() {
@@ -62,7 +131,10 @@ export default {
                         .then((response) => response.json())
                         .then((data) => {
                             this.emotionList = data;
-                            sessionStorage.setItem("jx3_emotion", JSON.stringify(data));
+                            sessionStorage.setItem(
+                                "jx3_emotion",
+                                JSON.stringify(data)
+                            );
                         });
                 }
             } catch (e) {
@@ -70,7 +142,10 @@ export default {
                     .then((response) => response.json())
                     .then((data) => {
                         this.emotionList = data;
-                        sessionStorage.setItem("jx3_emotion", JSON.stringify(data));
+                        sessionStorage.setItem(
+                            "jx3_emotion",
+                            JSON.stringify(data)
+                        );
                     });
             }
         },
@@ -89,11 +164,38 @@ export default {
                     this.decoration = res.data.data.map((item) => item.val);
                 });
         },
+
+        // 关闭弹窗
+        closePop() {
+            if (this.$refs.emotion) {
+                this.$refs.emotion.doClose();
+            }
+        },
     },
 };
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
+.scrollbar(@width: 4px){
+    // max-height: 70vh;
+    &::-webkit-scrollbar {
+        width: @width;
+    }
+    &::-webkit-scrollbar-track,
+    &::-webkit-scrollbar-track-piece {
+        background-color: #fafafa;
+        border-radius: 6px;
+    }
+    &::-webkit-scrollbar-thumb {
+        background-color: #eee;
+        border-radius: 6px;
+    }
+    &::-webkit-scrollbar-button,
+    &::-webkit-scrollbar-corner,
+    &::-webkit-resizer {
+        display: none;
+    }
+}
 .c-jx3box-emotion {
     margin: 16px 0;
 
@@ -103,6 +205,53 @@ export default {
         margin: 2px;
         border: 1px solid #fff;
         cursor: pointer;
+        width: 20px;
+
+        &:hover {
+            border-color: #ccc;
+        }
+    }
+
+    .u-reference {
+        cursor: pointer;
+    }
+}
+.c-jx3box-emotion-pop {
+    padding: 0 0px 2px 2px;
+    width: 380px;
+}
+@media screen and (max-width: 720px) {
+    .c-jx3box-emotion-pop {
+        width: 310px;
+    }
+}
+.c-jx3box-emotion-pop__content {
+    position: relative;
+    .u-title {
+        font-size: 14px;
+        padding: 15px;
+    }
+    .u-close {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+    .c-jx3box-emotion-list {
+        height: 200px;
+        overflow: hidden auto;
+        .scrollbar();
+    }
+    .c-jx3box-emotion-item {
+        display: inline-block;
+        box-sizing: border-box;
+        padding: 4px;
+        margin: 2px;
+        border: 1px solid #fff;
+        cursor: pointer;
+        width: 32px;
+        height: 32px;
 
         &:hover {
             border-color: #ccc;
