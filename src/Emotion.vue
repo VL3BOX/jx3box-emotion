@@ -32,12 +32,25 @@
                 <i class="el-icon-close u-close" @click="closePop"></i>
                 <div class="u-title">表情</div>
 
-                <el-tabs class="u-tabs" type="card" tab-position="bottom" size="small">
+                <el-tabs
+                    class="u-tabs"
+                    type="card"
+                    tab-position="bottom"
+                    size="small"
+                >
                     <el-tab-pane
                         v-for="item in decorationEmotion"
                         :key="item.group_id"
                         :label="item.group_name"
                     >
+                        <template #label>
+                            <img
+                                :src="`${EmojiPath}${item.items[0].filename}`"
+                                :alt="item.items[0].key"
+                                :title="item.group_name"
+                                class="u-tab-label"
+                            />
+                        </template>
                         <div class="c-jx3box-emotion-list">
                             <span
                                 v-for="emotion in item.items"
@@ -176,7 +189,7 @@ export default {
 </script>
 
 <style lang="less">
-.scrollbar(@width: 4px){
+.scrollbar(@width: 4px) {
     // max-height: 70vh;
     &::-webkit-scrollbar {
         width: @width;
@@ -227,6 +240,12 @@ export default {
 }
 .c-jx3box-emotion-pop__content {
     position: relative;
+    .u-tab-label {
+        width: 20px;
+        height: 20px;
+        .pr;
+        top: 4px;
+    }
     .u-title {
         font-size: 14px;
         padding: 10px;
@@ -242,27 +261,26 @@ export default {
         height: 200px;
         overflow: hidden auto;
         .scrollbar();
-        padding-left:8px;
+        padding-left: 8px;
     }
-    .u-tabs{
-
-        .el-tabs__nav-scroll{
-            background-color:#fafbfc;
+    .u-tabs {
+        .el-tabs__nav-scroll {
+            background-color: #fafbfc;
             border-top: 1px solid #eee;
         }
-        .el-tabs__nav{
+        .el-tabs__nav {
             border-radius: 0 !important;
-            border-top:none;
+            border-top: none;
             border-right: none !important;
             border-left: none !important;
         }
-        .el-tabs__item{
+        .el-tabs__item {
             border: none !important;
             line-height: 32px;
             height: 32px;
-            padding:0 10px !important;
-            &.is-active{
-                background-color:#fff;
+            padding: 0 10px !important;
+            &.is-active {
+                background-color: #fff;
             }
             // .pr;
             // &:after{
@@ -277,17 +295,17 @@ export default {
     }
 }
 .c-jx3box-emotion-item {
-        display: inline-block;
-        box-sizing: border-box;
-        padding: 4px;
-        margin: 2px;
-        border: 1px solid #fff;
-        cursor: pointer;
-        width: 32px;
-        height: 32px;
+    display: inline-block;
+    box-sizing: border-box;
+    padding: 4px;
+    margin: 2px;
+    border: 1px solid #fff;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
 
-        &:hover {
-            border-color: #ccc;
-        }
+    &:hover {
+        border-color: #ccc;
     }
+}
 </style>
