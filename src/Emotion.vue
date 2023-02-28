@@ -293,19 +293,19 @@ export default {
             // }
         }
     }
-}
-.c-jx3box-emotion-item {
-    display: inline-block;
-    box-sizing: border-box;
-    padding: 4px;
-    margin: 2px;
-    border: 1px solid #fff;
-    cursor: pointer;
-    width: 32px;
-    height: 32px;
+    .c-jx3box-emotion-item {
+        display: inline-block;
+        box-sizing: border-box;
+        padding: 4px;
+        margin: 2px;
+        border: 1px solid #fff;
+        cursor: pointer;
+        width: 32px;
+        height: 32px;
 
-    &:hover {
-        border-color: #ccc;
+        &:hover {
+            border-color: #ccc;
+        }
     }
 }
 </style>
