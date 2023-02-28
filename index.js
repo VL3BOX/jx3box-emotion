@@ -1,12 +1,42 @@
 /**
  * @description: 骚话渲染
  * @author: Kaviilee
- * @version: 1.0.0
+ * @version: 1.1.5
  */
 
 import $ from "jquery";
 import { __imgPath, __dataPath } from "@jx3box/jx3box-common/data/jx3box.json";
 import { flatMapDeep } from "lodash"
+
+// 获取全部表情
+function getEmotion() {
+    try {
+        const emotion = sessionStorage.getItem("jx3_emotion");
+        if (emotion) {
+            return;
+        } else {
+            fetch(`${__dataPath}emotion/output/catalog.json`)
+                .then((response) => response.json())
+                .then((data) => {
+                    sessionStorage.setItem(
+                        "jx3_emotion",
+                        JSON.stringify(data)
+                    );
+                });
+        }
+    } catch (e) {
+        fetch(`${__dataPath}emotion/output/catalog.json`)
+            .then((response) => response.json())
+            .then((data) => {
+                sessionStorage.setItem(
+                    "jx3_emotion",
+                    JSON.stringify(data)
+                );
+            });
+    }
+}
+
+getEmotion();
 
 class JX3_EMOTION {
     /**

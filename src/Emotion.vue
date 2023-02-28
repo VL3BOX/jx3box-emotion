@@ -1,28 +1,68 @@
 <template>
     <div class="c-jx3box-emotion">
         <el-tabs type="card" v-if="type === 'default'">
-            <el-tab-pane v-for="item in decorationEmotion" :key="item.group_id" :label="item.group_name">
-                <span v-for="emotion in item.items" :key="emotion.emotion_id" class="c-jx3box-emotion-item" @click="handleEmotionClick(emotion)">
-                    <img :src="`${EmojiPath}${emotion.filename}`" :alt="emotion.key" :title="emotion.key" />
+            <el-tab-pane
+                v-for="item in decorationEmotion"
+                :key="item.group_id"
+                :label="item.group_name"
+            >
+                <span
+                    v-for="emotion in item.items"
+                    :key="emotion.emotion_id"
+                    class="c-jx3box-emotion-item"
+                    @click="handleEmotionClick(emotion)"
+                >
+                    <img
+                        :src="`${EmojiPath}${emotion.filename}`"
+                        :alt="emotion.key"
+                        :title="emotion.key"
+                    />
                 </span>
             </el-tab-pane>
         </el-tabs>
-        <el-popover v-else placement="top" trigger="click" :visible-arrow="false" popper-class="c-jx3box-emotion-pop" ref="emotion">
+        <el-popover
+            v-else
+            placement="top"
+            trigger="click"
+            :visible-arrow="false"
+            popper-class="c-jx3box-emotion-pop"
+            ref="emotion"
+        >
             <div class="c-jx3box-emotion-pop__content">
                 <i class="el-icon-close u-close" @click="closePop"></i>
                 <div class="u-title">表情</div>
 
                 <el-tabs class="u-tabs" type="card" tab-position="bottom" size="small">
-                    <el-tab-pane v-for="item in decorationEmotion" :key="item.group_id" :label="item.group_name">
+                    <el-tab-pane
+                        v-for="item in decorationEmotion"
+                        :key="item.group_id"
+                        :label="item.group_name"
+                    >
                         <div class="c-jx3box-emotion-list">
-                            <span v-for="emotion in item.items" :key="emotion.emotion_id" class="c-jx3box-emotion-item" @click="handleEmotionClick(emotion)">
-                                <img :src="`${EmojiPath}${emotion.filename}`" :alt="emotion.key" :title="emotion.key" />
+                            <span
+                                v-for="emotion in item.items"
+                                :key="emotion.emotion_id"
+                                class="c-jx3box-emotion-item"
+                                @click="handleEmotionClick(emotion)"
+                            >
+                                <img
+                                    :src="`${EmojiPath}${emotion.filename}`"
+                                    :alt="emotion.key"
+                                    :title="emotion.key"
+                                />
                             </span>
                         </div>
                     </el-tab-pane>
                 </el-tabs>
             </div>
-            <img slot="reference" class="u-reference" width="24" height="24" src="../data/img/emotion.svg" alt="" />
+            <img
+                slot="reference"
+                class="u-reference"
+                width="24"
+                height="24"
+                src="../data/img/emotion.svg"
+                alt=""
+            />
         </el-popover>
     </div>
 </template>
@@ -55,12 +95,16 @@ export default {
     computed: {
         decorationEmotion({ emotionList, decoration }) {
             // 默认表情
-            const defaultEmo = emotionList.filter((item) => item.group_id === 0);
+            const defaultEmo = emotionList.filter(
+                (item) => item.group_id === 0
+            );
             if (decoration.length === 0) {
                 return defaultEmo;
             } else {
                 // 购买的表情
-                const arr = emotionList.filter((item) => decoration.includes(item.group_name));
+                const arr = emotionList.filter((item) =>
+                    decoration.includes(item.group_name)
+                );
                 // 截取4个
                 return [...defaultEmo, ...arr].slice(0, 4);
             }
@@ -87,7 +131,10 @@ export default {
                         .then((response) => response.json())
                         .then((data) => {
                             this.emotionList = data;
-                            sessionStorage.setItem("jx3_emotion", JSON.stringify(data));
+                            sessionStorage.setItem(
+                                "jx3_emotion",
+                                JSON.stringify(data)
+                            );
                         });
                 }
             } catch (e) {
@@ -95,7 +142,10 @@ export default {
                     .then((response) => response.json())
                     .then((data) => {
                         this.emotionList = data;
-                        sessionStorage.setItem("jx3_emotion", JSON.stringify(data));
+                        sessionStorage.setItem(
+                            "jx3_emotion",
+                            JSON.stringify(data)
+                        );
                     });
             }
         },
@@ -126,7 +176,7 @@ export default {
 </script>
 
 <style lang="less">
-.scrollbar(@width: 4px) {
+.scrollbar(@width: 4px){
     // max-height: 70vh;
     &::-webkit-scrollbar {
         width: @width;
@@ -192,26 +242,27 @@ export default {
         height: 200px;
         overflow: hidden auto;
         .scrollbar();
-        padding-left: 8px;
+        padding-left:8px;
     }
-    .u-tabs {
-        .el-tabs__nav-scroll {
-            background-color: #fafbfc;
+    .u-tabs{
+
+        .el-tabs__nav-scroll{
+            background-color:#fafbfc;
             border-top: 1px solid #eee;
         }
-        .el-tabs__nav {
+        .el-tabs__nav{
             border-radius: 0 !important;
-            border-top: none;
+            border-top:none;
             border-right: none !important;
             border-left: none !important;
         }
-        .el-tabs__item {
+        .el-tabs__item{
             border: none !important;
             line-height: 32px;
             height: 32px;
-            padding: 0 10px !important;
-            &.is-active {
-                background-color: #fff;
+            padding:0 10px !important;
+            &.is-active{
+                background-color:#fff;
             }
             // .pr;
             // &:after{
@@ -226,17 +277,17 @@ export default {
     }
 }
 .c-jx3box-emotion-item {
-    display: inline-block;
-    box-sizing: border-box;
-    padding: 4px;
-    margin: 2px;
-    border: 1px solid #fff;
-    cursor: pointer;
-    width: 32px;
-    height: 32px;
+        display: inline-block;
+        box-sizing: border-box;
+        padding: 4px;
+        margin: 2px;
+        border: 1px solid #fff;
+        cursor: pointer;
+        width: 32px;
+        height: 32px;
 
-    &:hover {
-        border-color: #ccc;
+        &:hover {
+            border-color: #ccc;
+        }
     }
-}
 </style>
