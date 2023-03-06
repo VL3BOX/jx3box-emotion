@@ -91,6 +91,10 @@ export default {
             type: String,
             default: "default",
         },
+        max: {
+            type: Number,
+            default: 4,
+        },
     },
     emits: ["selected"],
     data() {
@@ -119,7 +123,7 @@ export default {
                     decoration.includes(item.group_name)
                 );
                 // 截取4个
-                return [...defaultEmo, ...arr].slice(0, 4);
+                return [...defaultEmo, ...arr].slice(0, this.max);
             }
         },
     },
