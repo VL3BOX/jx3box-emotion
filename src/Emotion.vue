@@ -247,7 +247,7 @@ export default {
     .u-tab-label {
         width: 20px;
         height: 20px;
-        .pr;
+        position: relative;
         top: 4px;
     }
     .u-title {
