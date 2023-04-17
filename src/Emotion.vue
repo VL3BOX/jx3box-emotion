@@ -82,7 +82,7 @@
 
 <script>
 import { __imgPath, __dataPath } from "@jx3box/jx3box-common/data/jx3box.json";
-import { $cms } from "@jx3box/jx3box-common/js/https";
+import { $cms } from "./service";
 import User from "@jx3box/jx3box-common/js/user.js";
 export default {
     name: "Emotion",
@@ -178,7 +178,7 @@ export default {
                     },
                 })
                 .then((res) => {
-                    this.decoration = res.data.data.map((item) => item.val);
+                    this.decoration = res.data?.data?.map((item) => item?.val);
                 });
         },
 
