@@ -5,8 +5,9 @@
  */
 
 import $ from "jquery";
-import { __imgPath, __dataPath } from "@jx3box/jx3box-common/data/jx3box.json";
+import JX3BOX from "@jx3box/jx3box-common/data/jx3box.json";
 import { flatMapDeep } from "lodash"
+const { __imgPath, __dataPath } = JX3BOX;
 
 // 获取全部表情
 function getEmotion() {
