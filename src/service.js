@@ -1,5 +1,6 @@
 import axios from "axios";
-import { __cms } from "@jx3box/jx3box-common/data/jx3box.json";
+import JX3BOX from "@jx3box/jx3box-common/data/jx3box.json";
+const { __cms } = JX3BOX;
 
 const $cms = (options) => {
     const domain = options && options.domain || __cms;
