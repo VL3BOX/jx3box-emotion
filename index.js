@@ -68,6 +68,10 @@ class JX3_EMOTION {
     }
 
     _renderHTML() {
+        if (this.max >= 3) {
+            return this._joke;
+        }
+        
         this.emotionList = this.loadEmotionList();
         let str = this._joke;
 
