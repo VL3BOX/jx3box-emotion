@@ -30,7 +30,7 @@
         >
             <div class="c-jx3box-emotion-pop__content">
                 <el-icon class="u-close" @click="closePop"><Close /></el-icon>
-                <div class="u-title">表情</div>
+                <div class="u-title">{{ $t('表情') }}</div>
 
                 <el-tabs
                     class="u-tabs"
